@@ -1,8 +1,14 @@
+"""
+Alternative AI service using Groq (Free tier available)
+To use: Rename this file to main.py and update requirements.txt
+Get free API key from: https://console.groq.com/
+"""
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
-from openai import OpenAI
+from groq import Groq
 import os
 from dotenv import load_dotenv
 import json
@@ -19,8 +25,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Initialize Groq client
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 class ChatRequest(BaseModel):
     message: str
@@ -46,9 +52,9 @@ async def chat(request: ChatRequest):
             if request.context.get("error"):
                 system_prompt += f"\nRecent error: {request.context['error']}"
 
-            # Stream response from OpenAI
+            # Stream response from Groq (using Llama 3.1 70B)
             stream = client.chat.completions.create(
-                model="gpt-3.5-turbo",  # Free tier available, or use "gpt-4o-mini" for better quality
+                model="llama-3.1-70b-versatile",  # Fast and free
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": request.message}
