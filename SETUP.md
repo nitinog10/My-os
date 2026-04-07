@@ -98,14 +98,16 @@ Your AWS credentials need these permissions:
 - `cognito-idp:InitiateAuth`
 - `cognito-idp:SignUp`
 
-## Anthropic API Key
+## OpenAI API Key
 
-1. Go to https://console.anthropic.com/
+1. Go to https://platform.openai.com/
 2. Create an account or sign in
 3. Navigate to API Keys
 4. Create a new API key
-5. Copy the key (starts with `sk-ant-`)
-6. Add to `ai-service/.env`
+5. Copy the key (starts with `sk-`)
+6. Add to `ai-service/.env`: `OPENAI_API_KEY=sk-...`
+
+Note: OpenAI offers pay-as-you-go pricing. GPT-3.5-turbo is very affordable (~$0.0005 per 1K tokens).
 
 ## Testing the Setup
 

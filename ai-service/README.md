@@ -1,73 +1,42 @@
 # WebOS AI Service
 
-This service provides AI chat functionality for WebOS using various AI providers.
+This service provides AI chat functionality for WebOS using OpenAI.
 
-## Supported AI Providers
+## Setup
 
-### 1. OpenAI (Default - Recommended)
-- **Model**: GPT-3.5-turbo or GPT-4o-mini
-- **Cost**: Pay-as-you-go (GPT-3.5-turbo is very affordable)
-- **Setup**: Get API key from https://platform.openai.com/api-keys
-- **File**: `main.py` (current)
-- **Requirements**: `requirements.txt` (current)
+### 1. Get OpenAI API Key
 
-### 2. Groq (Free Alternative)
-- **Model**: Llama 3.1 70B
-- **Cost**: FREE with generous limits
-- **Setup**: Get free API key from https://console.groq.com/
-- **File**: `main_groq.py` (rename to `main.py`)
-- **Requirements**: `requirements_groq.txt` (rename to `requirements.txt`)
+1. Go to https://platform.openai.com/
+2. Sign up or log in
+3. Go to API Keys section
+4. Create new secret key
+5. Copy the key (starts with `sk-`)
 
-## Quick Setup
+### 2. Configure Environment
 
-### Option 1: OpenAI (Default)
+```bash
+cp .env.example .env
+```
 
-1. Get API key from https://platform.openai.com/api-keys
-2. Create `.env` file:
-   ```bash
-   cp .env.example .env
-   ```
-3. Add your OpenAI API key:
-   ```
-   OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-   PORT=8000
-   ```
-4. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-5. Run:
-   ```bash
-   python main.py
-   ```
+Edit `.env` and add your API key:
+```
+OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+PORT=8000
+```
 
-### Option 2: Groq (Free)
+### 3. Install Dependencies
 
-1. Get FREE API key from https://console.groq.com/
-2. Rename files:
-   ```bash
-   mv main.py main_openai.py
-   mv main_groq.py main.py
-   mv requirements.txt requirements_openai.txt
-   mv requirements_groq.txt requirements.txt
-   ```
-3. Create `.env` file:
-   ```bash
-   cp .env.example .env
-   ```
-4. Add your Groq API key:
-   ```
-   GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-   PORT=8000
-   ```
-5. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-6. Run:
-   ```bash
-   python main.py
-   ```
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run the Service
+
+```bash
+python main.py
+```
+
+The service will run on http://localhost:8000
 
 ## Testing
 
@@ -103,66 +72,32 @@ Request body:
 
 Response: Server-Sent Events (SSE) stream
 
-## Models Comparison
+## Models
 
-| Provider | Model | Cost | Speed | Quality |
-|----------|-------|------|-------|---------|
-| OpenAI | GPT-3.5-turbo | $0.0005/1K tokens | Fast | Good |
-| OpenAI | GPT-4o-mini | $0.00015/1K tokens | Fast | Better |
-| Groq | Llama 3.1 70B | FREE | Very Fast | Good |
+- **Default**: GPT-3.5-turbo (fast and affordable)
+- **Alternative**: GPT-4o-mini (better quality, still affordable)
 
-## Recommendation
-
-- **For Development**: Use Groq (free and fast)
-- **For Production**: Use OpenAI GPT-4o-mini (best quality, very affordable)
-
-## Getting API Keys
-
-### OpenAI
-1. Go to https://platform.openai.com/
-2. Sign up or log in
-3. Go to API Keys section
-4. Create new secret key
-5. Copy the key (starts with `sk-`)
-
-### Groq (FREE)
-1. Go to https://console.groq.com/
-2. Sign up with Google/GitHub
-3. Go to API Keys section
-4. Create new API key
-5. Copy the key (starts with `gsk_`)
+To change model, edit `main.py` and update the `model` parameter.
 
 ## Troubleshooting
 
 ### "Invalid API key"
 - Check your API key is correct in `.env`
 - Make sure there are no extra spaces
-- Verify the key is active in the provider's dashboard
+- Verify the key is active in OpenAI dashboard
 
 ### "Rate limit exceeded"
-- OpenAI: Add payment method or wait
-- Groq: Wait for rate limit to reset (very generous limits)
+- Add payment method in OpenAI dashboard
+- Or wait for rate limit to reset
 
 ### "Module not found"
-- Make sure you installed dependencies: `pip install -r requirements.txt`
-- Check you're using the correct requirements file for your provider
+- Install dependencies: `pip install -r requirements.txt`
+- Make sure you're in the ai-service directory
 
-## Environment Variables
+## Cost
 
-```bash
-# For OpenAI
-OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+OpenAI pricing (as of 2024):
+- GPT-3.5-turbo: $0.0005 per 1K tokens (very affordable)
+- GPT-4o-mini: $0.00015 per 1K tokens (even cheaper!)
 
-# For Groq
-GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-# Common
-PORT=8000
-```
-
-## Notes
-
-- The service runs on port 8000 by default
-- All responses are streamed using Server-Sent Events (SSE)
-- Context from terminal/editor is automatically included in prompts
-- Both providers support streaming responses
+For typical usage, costs are minimal (a few cents per day).
