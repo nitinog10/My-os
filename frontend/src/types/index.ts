@@ -1,3 +1,4 @@
+```typescript
 export interface FSNode {
   name: string;
   type: 'file' | 'folder';
@@ -67,3 +68,4 @@ export interface AIMessage {
   content: string;
   timestamp: number;
 }
+```

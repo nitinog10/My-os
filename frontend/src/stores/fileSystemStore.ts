@@ -1,6 +1,9 @@
+```typescript
 import { create } from 'zustand';
 import { FSNode } from '../types';
 import axios from 'axios';
+import { getToken } from '../utils/auth';
+import { findNode } from '../utils/fileSystem';
 
 interface FileSystemStore {
   root: FSNode | null;
@@ -14,18 +17,6 @@ interface FileSystemStore {
   getNode: (path: string) => FSNode | null;
 }
 
-const findNode = (root: FSNode | null, path: string): FSNode | null => {
-  if (!root) return null;
-  if (root.path === path) return root;
-  if (root.type === 'folder' && root.children) {
-    for (const child of root.children) {
-      const found = findNode(child, path);
-      if (found) return found;
-    }
-  }
-  return null;
-};
-
 export const useFileSystemStore = create<FileSystemStore>((set, get) => ({
   root: null,
   isLoading: false,
@@ -33,9 +24,8 @@ export const useFileSystemStore = create<FileSystemStore>((set, get) => ({
   loadFileSystem: async () => {
     set({ isLoading: true });
     try {
-      const token = localStorage.getItem('token');
       const response = await axios.get('/api/files', {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${getToken()}` },
       });
       set({ root: response.data, isLoading: false });
     } catch (error) {
@@ -46,11 +36,10 @@ export const useFileSystemStore = create<FileSystemStore>((set, get) => ({
 
   createFile: async (path, content = '') => {
     try {
-      const token = localStorage.getItem('token');
       await axios.post(
         '/api/files',
         { path, type: 'file', content },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${getToken()}` } }
       );
       await get().loadFileSystem();
     } catch (error) {
@@ -60,11 +49,10 @@ export const useFileSystemStore = create<FileSystemStore>((set, get) => ({
 
   createFolder: async (path) => {
     try {
-      const token = localStorage.getItem('token');
       await axios.post(
         '/api/files',
         { path, type: 'folder' },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${getToken()}` } }
       );
       await get().loadFileSystem();
     } catch (error) {
@@ -74,9 +62,8 @@ export const useFileSystemStore = create<FileSystemStore>((set, get) => ({
 
   deleteNode: async (path) => {
     try {
-      const token = localStorage.getItem('token');
       await axios.delete(`/api/files?path=${encodeURIComponent(path)}`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${getToken()}` },
       });
       await get().loadFileSystem();
     } catch (error) {
@@ -86,11 +73,10 @@ export const useFileSystemStore = create<FileSystemStore>((set, get) => ({
 
   updateFile: async (path, content) => {
     try {
-      const token = localStorage.getItem('token');
       await axios.patch(
         '/api/files',
         { path, content },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${getToken()}` } }
       );
       await get().loadFileSystem();
     } catch (error) {
@@ -100,11 +86,10 @@ export const useFileSystemStore = create<FileSystemStore>((set, get) => ({
 
   renameNode: async (oldPath, newPath) => {
     try {
-      const token = localStorage.getItem('token');
       await axios.patch(
         '/api/files/rename',
         { oldPath, newPath },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${getToken()}` } }
       );
       await get().loadFileSystem();
     } catch (error) {
@@ -116,3 +101,4 @@ export const useFileSystemStore = create<FileSystemStore>((set, get) => ({
     return findNode(get().root, path);
   },
 }));
+```
