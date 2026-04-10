@@ -2928,3 +2928,11 @@ This file defines the `WindowFrame` component, which renders a draggable and res
 - Animations are handled by `framer-motion` to provide smooth transitions for window appearance and disappearance.
 - Ensure that the `useWindowStore` hook is properly set up in your application context to manage window states.
 
+## Code Improvements Applied
+
+- Added regression tests for high-risk files:
+  - `frontend/src/types/index.ts`
+  - `frontend/src/stores/windowStore.ts`
+  - `frontend/src/stores/fileSystemStore.ts`
+- Proposed extraction of shared utility code into a dedicated module.
+- Updated documentation with regenerated walkthroughs and diagrams.
