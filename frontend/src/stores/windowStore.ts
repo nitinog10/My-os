@@ -1,5 +1,7 @@
+```typescript
 import { create } from 'zustand';
 import { WindowState } from '../types';
+import { generateUniqueId, updateZIndex } from '../utils';
 
 interface WindowStore {
   windows: WindowState[];
@@ -18,7 +20,7 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
   nextZIndex: 100,
 
   openWindow: (appId, title, props) => {
-    const id = `${appId}-${Date.now()}`;
+    const id = generateUniqueId(appId);
     const newWindow: WindowState = {
       id,
       appId,
@@ -35,8 +37,8 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
     };
 
     set((state) => ({
-      windows: state.windows.map((w) => ({ ...w, isFocused: false })).concat(newWindow),
-      nextZIndex: state.nextZIndex + 1,
+      windows: state.windows.map((w) => ({...w, isFocused: false })).concat(newWindow),
+      nextZIndex: updateZIndex(state.nextZIndex),
     }));
 
     return id;
@@ -44,7 +46,7 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
 
   closeWindow: (id) => {
     set((state) => ({
-      windows: state.windows.filter((w) => w.id !== id),
+      windows: state.windows.filter((w) => w.id!== id),
     }));
   },
 
@@ -52,17 +54,17 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
     set((state) => ({
       windows: state.windows.map((w) =>
         w.id === id
-          ? { ...w, isFocused: true, zIndex: state.nextZIndex, isMinimized: false }
-          : { ...w, isFocused: false }
+         ? {...w, isFocused: true, zIndex: state.nextZIndex, isMinimized: false }
+          : {...w, isFocused: false }
       ),
-      nextZIndex: state.nextZIndex + 1,
+      nextZIndex: updateZIndex(state.nextZIndex),
     }));
   },
 
   minimizeWindow: (id) => {
     set((state) => ({
       windows: state.windows.map((w) =>
-        w.id === id ? { ...w, isMinimized: !w.isMinimized } : w
+        w.id === id? {...w, isMinimized: !w.isMinimized } : w
       ),
     }));
   },
@@ -70,20 +72,21 @@ export const useWindowStore = create<WindowStore>((set, get) => ({
   maximizeWindow: (id) => {
     set((state) => ({
       windows: state.windows.map((w) =>
-        w.id === id ? { ...w, isMaximized: !w.isMaximized } : w
+        w.id === id? {...w, isMaximized: !w.isMaximized } : w
       ),
     }));
   },
 
   updateWindowPosition: (id, x, y) => {
     set((state) => ({
-      windows: state.windows.map((w) => (w.id === id ? { ...w, x, y } : w)),
+      windows: state.windows.map((w) => (w.id === id ? {...w, x, y } : w)),
     }));
   },
 
   updateWindowSize: (id, width, height) => {
     set((state) => ({
-      windows: state.windows.map((w) => (w.id === id ? { ...w, width, height } : w)),
+      windows: state.windows.map((w) => (w.id === id? {...w, width, height } : w)),
     }));
   },
 }));
+```
